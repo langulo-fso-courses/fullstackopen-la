@@ -1,0 +1,22 @@
+note over browser:
+User writes a new note and clicks "save".
+JS code inserts the new note in the DOM,
+re-renders the page and sends a POST req.
+with JSON note to /new_note_spa URI.
+end note
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa {note}
+
+
+note over server:
+Server handles the POST request and
+returns a JSON serialized message obj
+confirming the note was created on the
+server (probably inserted in a db).
+end note
+server-->browser: { message: "note created" }
+
+note over browser:
+JS in browser gets confirmation that
+the note was created and logs the info
+to the JS console (Not visible to user).
+end note

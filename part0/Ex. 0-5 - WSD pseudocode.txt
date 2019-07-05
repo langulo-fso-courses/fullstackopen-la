@@ -1,0 +1,16 @@
+note over browser:
+The browser requests the spa version
+of the note app at the URI /spa.
+end note
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa
+
+note over server:
+The server handles the request and 
+replies with a different set of static
+assets (spa.js instead of main.js)
+end note
+server-->browser: HTML-code
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa.js
+server-->browser: spa.js

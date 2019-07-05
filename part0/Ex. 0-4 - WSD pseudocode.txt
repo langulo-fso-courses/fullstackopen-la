@@ -1,0 +1,39 @@
+note over browser:
+User writes a new note and clicks "save".
+end note
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+
+note over server:
+Server handles the request by
+returning the base html document.
+The document has references to other
+static assets and triggers a chain 
+of requests for them (css, js).
+end note
+
+server-->browser: HTML-code
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+server-->browser: main.js
+
+note over browser:
+Browser runs js-code that requests notes
+in JSON serialized format from server 
+end note
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+
+note over server:
+Server handles the request by fetching
+the data from a backend, serializes the
+note data to JSON format and sends the
+response to the client.
+end note
+server-->browser: [{ content: "HTML is easy", date: "2019-05-23" }, ...]
+
+note over browser:
+browser executes a js callback function
+that embeds the data to the DOM, then
+displays the altered DOM to the user.
+end note
