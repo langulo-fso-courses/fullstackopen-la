@@ -2,11 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 const Header = props => {
-  return <h1>{props.course}</h1>;
+  console.log("Header: ", props)
+  return <h1>{props.course.name}</h1>;
 };
 
 const Content = props => {
-  console.log("content compn:", props);
+  console.log("content compn:", props.parts[0]);
   return (
     <>
       <Part course={props.parts[0]} />
@@ -17,7 +18,7 @@ const Content = props => {
 };
 
 const Part = props => {
-  console.log("part compn:", props);
+  console.log("part compn:", props.course);
   return (
     <p>
       {props.course.name} : {props.course.exercises}
@@ -30,21 +31,25 @@ const Total = props => {
 };
 
 const App = props => {
-  const course = "Half Stack application development";
-  const parts = [
-    {
-      name: 'Fundamentals of React',
-      exercises: 10
-    },
-    {
-      name: 'Using props to pass data',
-      exercises: 7
-    },
-    {
-      name: 'State of a component',
-      exercises: 14
-    }
-  ];
+  const course = {
+    name:"Half Stack application development",
+    parts: [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        name: 'State of a component',
+        exercises: 14
+      }
+    ]
+  };
+  
+  const [...parts] = course.parts;
 
   return (
     <div className="course-canvas">
