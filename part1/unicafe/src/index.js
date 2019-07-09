@@ -1,12 +1,79 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// Button component
+const Button = ({ clickHandler, btnText }) => (
+  <button onClick={clickHandler}>{btnText}</button>
+);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+const Statistics = ({ good, neutral, bad }) => {
+  const votes = good + neutral + bad;
+  // PANIC! We have no votes! We can't continue! Just return a message! AAAAAAHHH!!!
+  if (votes === 0)
+    return (
+      <div>
+        <p>No feedback given</p>
+      </div>
+    );
+
+  const score = good - bad;
+  const average = score / votes;
+  const positives = good / votes;
+
+  return (
+    <>
+      <h1>
+        <b>Statistics</b>
+      </h1>
+      <table>
+        <tbody>
+          <Statistic name="Good" value={good} />
+          <Statistic name="Neutral" value={neutral} />
+          <Statistic name="Bad" value={bad} />
+          <Statistic name="All" value={votes} />
+          <Statistic name="Average" value={average} />
+          <Statistic name="Positive" value={positives.toString() + "%"} />
+        </tbody>
+      </table>
+    </>
+  );
+};
+
+// Remember the args will be destructured here (I.E. "props.name, props.value")
+const Statistic = ({ name, value }) => {
+  return (
+    <tr>
+      <td>
+        <b>{name}:</b>
+      </td>
+      <td>{value}</td>
+    </tr>
+  );
+};
+
+const App = () => {
+  // save clicks of each button to own state
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  // Voting function
+  const vote = (handler, value) => handler(value + 1);
+
+  return (
+    <>
+      <div>
+        <h1>Give feedback</h1>
+        <Button clickHandler={() => vote(setGood, good)} btnText="Good" />
+        <Button
+          clickHandler={() => vote(setNeutral, neutral)}
+          btnText="Neutral"
+        />
+        <Button clickHandler={() => vote(setBad, bad)} btnText="Bad" />
+      </div>
+      <Statistics good={good} neutral={neutral} bad={bad} />
+    </>
+  );
+};
+
+ReactDOM.render(<App />, document.getElementById("root"));
