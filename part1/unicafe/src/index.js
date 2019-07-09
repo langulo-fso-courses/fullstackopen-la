@@ -6,7 +6,30 @@ const Button = ({ clickHandler, btnText }) => (
   <button onClick={clickHandler}>{btnText}</button>
 );
 
-const Statistics = props => <div className="statistics-display">{props.stats.map(stat => (<p><b>{stat.name}</b>: {stat.value}</p>))}</div>
+const Statistics = ({good, neutral, bad}) => {
+    const votes = good + neutral + bad
+    const score = good - bad
+    const average = score/votes
+    const positives = good/votes
+
+    return(
+        <div className="statistics-display">
+            <Statistic name="Good" value={good} />
+            <Statistic name="Neutral" value={neutral} />
+            <Statistic name="Bad" value={bad} />
+            <Statistic name="All" value={votes} />
+            <Statistic name="Average" value={average}/>
+            <Statistic name="Positive" value={positives.toString() + "%"}/>
+        </div>
+    )
+}
+
+// Remember the args will be destructured here (I.E. "props.name, props.value")
+const Statistic = ({name, value}) => {
+    return(
+        <div><span className="statistic-span"><b>{name}: </b>{value}</span></div>
+    )
+}
 
 const App = () => {
   // save clicks of each button to own state
@@ -28,7 +51,7 @@ const App = () => {
         />
         <Button clickHandler={() => vote(setBad, bad)} btnText="Bad" />
       </div>
-      <Statistics stats={[{name: "Good",value: good}, {name: "Neutral", value: neutral}, {name: "Bad",value: bad}]} />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </>
   );
 };
