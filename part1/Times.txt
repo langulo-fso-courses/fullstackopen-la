@@ -1,0 +1,22 @@
+Part 1-
+Course info:
+Step1: 5 mins
+Step2: 14 mins
+Step3: 30 mins
+Step4 20 mins
+Step5: 8 mins
+
+Unicafe:
+Step1: 43 mins
+Step2: 24 mins
+Step3: 0 mins (Already a component)
+Step4: 2 mins
+Step5: 0 mins (Already a component)
+Step6: 9 mins
+
+Anecdotes:
+Step1: 20 mins
+Step2: 14 mins
+Step3: 74 mins
+
+Total time: 283 minutes, approx. 4 1/2 hours
