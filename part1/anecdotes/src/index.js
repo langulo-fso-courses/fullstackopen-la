@@ -8,18 +8,34 @@ const Button = ({ handleClick, btnTxt }) => {
 const App = props => {
   // the selected anecdote (index integer)
   const [selected, setSelected] = useState(0);
-  // const a = anecdotes[1]
-  const nextAnecdote = () => {
-    console.log("next");
-    setSelected(Math.floor(Math.random() * anecdotes.length));
-  };
+  const [votes, setVotes] = useState({
+      0:0,
+      1:0,
+      2:0,
+      3:0,
+      4:0,
+      5:0,
+      6:0
+  });
 
-  const vote = () => () => {};
+  // const a = anecdotes[1]
+  const nextAnecdote = () => setSelected(Math.floor(Math.random() * anecdotes.length));
+
+  // Rock the vote!
+  const vote = () => {
+    const newVotes = { ...votes }
+    newVotes[selected] +=1
+    setVotes(newVotes)
+  };
 
   return (
     <div>
       <div>{anecdotes[selected]}</div>
-      <Button handleClick={nextAnecdote} btnTxt="Next anecdote" />
+      <span>
+          <Button handleClick={nextAnecdote} btnTxt="Next anecdote" />
+          <Button handleClick={vote} btnTxt="Vote for this anecdote" />
+      </span>
+      <span><p>This anecdote has {votes[selected]} votes</p></span>
     </div>
   );
 };
