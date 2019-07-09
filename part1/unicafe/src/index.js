@@ -8,6 +8,9 @@ const Button = ({ clickHandler, btnText }) => (
 
 const Statistics = ({good, neutral, bad}) => {
     const votes = good + neutral + bad
+    // PANIC! We have no votes! We can't continue! Just return a message! AAAAAAHHH!!!
+    if (votes === 0) return <div><p>No feedback given</p></div>
+
     const score = good - bad
     const average = score/votes
     const positives = good/votes
