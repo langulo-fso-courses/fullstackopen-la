@@ -1,11 +1,26 @@
 import React, { useState } from "react";
 
+// The search form
+const Search = ({ newSSHandler, filterString }) => {
+  return (
+    <div className="search">
+      <p>filter shown with: </p>
+      <input type="text" onChange={newSSHandler} value={filterString} />
+    </div>
+  );
+};
+
 // The input form component
-const PhoneForm = ({ newNameHandler,  newPhoneHandler, submitHandler, newName, newPhone }) => {
+const PhoneForm = ({
+  newNameHandler,
+  newPhoneHandler,
+  submitHandler,
+  newName,
+  newPhone
+}) => {
   // form needs onSubmit, input needs onChange
   return (
     <form onSubmit={submitHandler}>
-      <h2>Phonebook</h2>
       <div>
         name: <input type="text" onChange={newNameHandler} value={newName} />
       </div>
@@ -20,8 +35,17 @@ const PhoneForm = ({ newNameHandler,  newPhoneHandler, submitHandler, newName, n
 };
 
 // The phonebook display component
-const PersonsDisplay = ({ persons }) => {
-  const personElements = persons.map(person => <div>{person.name} {person.phone}</div>);
+const PersonsDisplay = ({ persons, filterString }) => {
+  // The search filter
+  const filter = person =>
+    person.name.toLowerCase().includes(filterString) ||
+    filterString.length === 0;
+
+  const personElements = persons.filter(filter).map(person => (
+    <div>
+      {person.name} {person.phone}
+    </div>
+  ));
   return (
     <div>
       <h2>Numbers</h2>
@@ -32,13 +56,20 @@ const PersonsDisplay = ({ persons }) => {
 
 // The "main" app
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas", phone: "040-1234567" }]);
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", phone: "040-1234567" },
+    { name: "Ada Lovelace", phone: "39-44-5323523" },
+    { name: "Dan Abramov", phone: "12-43-234345" },
+    { name: "Mary Poppendieck", phone: "39-23-6423122" }
+  ]);
   const [newName, setNewName] = useState(""); // state of newname input
   const [newPhone, setNewPhone] = useState(""); // state of newphone input
+  const [filterString, setNewFS] = useState(""); // the search filter string
 
-  // The handler function for name changes (introducing a new person to the book)
+  // The handler functions for field changes (introducing a new person to the book, new phone, searchstring, etc)
   const newNameHandler = event => setNewName(event.target.value);
   const newPhoneHandler = event => setNewPhone(event.target.value);
+  const newSFHandler = event => setNewFS(event.target.value.toLowerCase());
 
   const submitHandler = event => {
     // Add the new person to the array, remember make a new one don't mutate the original
@@ -63,6 +94,9 @@ const App = () => {
   // App controls the rest of the form components and keeps track of the state
   return (
     <>
+      <h2>Phonebook</h2>
+      <Search newSSHandler={newSFHandler} />
+      <h2> Add new </h2>
       <PhoneForm
         newNameHandler={newNameHandler}
         newPhoneHandler={newPhoneHandler}
@@ -70,7 +104,8 @@ const App = () => {
         newName={newName}
         newPhone={newPhone}
       />
-      <PersonsDisplay persons={persons} />
+      <h1>Numbers </h1>
+      <PersonsDisplay persons={persons} filterString={filterString} />
     </>
   );
 };
