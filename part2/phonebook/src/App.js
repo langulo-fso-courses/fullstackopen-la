@@ -40,6 +40,12 @@ const App = () => {
     event.preventDefault();
     console.log("submit handler: ", event);
 
+    for (const person of persons) {
+      if (person.name === newName) {
+        alert("Person " + newName + " is already on the list");
+        return;
+      }
+    }
     setPersons(
       persons.concat({
         name: newName
