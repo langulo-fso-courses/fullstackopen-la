@@ -38,11 +38,10 @@ const App = () => {
   const submitHandler = event => {
     // Add the new person to the array, remember make a new one don't mutate the original
     event.preventDefault();
-    console.log("submit handler: ", event);
 
     for (const person of persons) {
       if (person.name === newName) {
-        alert("Person " + newName + " is already on the list");
+        alert(`${newName} is already added to phonebook`);
         return;
       }
     }
