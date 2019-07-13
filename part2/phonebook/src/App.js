@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Axios from "axios";
 
 // The search form
 const Search = ({ newSSHandler, filterString }) => {
@@ -11,12 +12,12 @@ const Search = ({ newSSHandler, filterString }) => {
 };
 
 // The input form component
-const PhoneForm = ({
+const NumberForm = ({
   newNameHandler,
-  newPhoneHandler,
+  newNumberHandler,
   submitHandler,
   newName,
-  newPhone
+  newNumber
 }) => {
   // form needs onSubmit, input needs onChange
   return (
@@ -25,7 +26,7 @@ const PhoneForm = ({
         name: <input type="text" onChange={newNameHandler} value={newName} />
       </div>
       <div>
-        phone: <input type="text" onChange={newPhoneHandler} value={newPhone} />
+        Number: <input type="text" onChange={newNumberHandler} value={newNumber} />
       </div>
       <div>
         <button type="submit">add</button>
@@ -43,7 +44,7 @@ const PersonsDisplay = ({ persons, filterString }) => {
 
   const personElements = persons.filter(filter).map(person => (
     <div>
-      {person.name} {person.phone}
+      {person.name} {person.number}
     </div>
   ));
   return (
@@ -56,19 +57,23 @@ const PersonsDisplay = ({ persons, filterString }) => {
 
 // The "main" app
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", phone: "040-1234567" },
-    { name: "Ada Lovelace", phone: "39-44-5323523" },
-    { name: "Dan Abramov", phone: "12-43-234345" },
-    { name: "Mary Poppendieck", phone: "39-23-6423122" }
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState(""); // state of newname input
-  const [newPhone, setNewPhone] = useState(""); // state of newphone input
+  const [newNumber, setNewNumber] = useState(""); // state of newnumber input
   const [filterString, setNewFS] = useState(""); // the search filter string
 
-  // The handler functions for field changes (introducing a new person to the book, new phone, searchstring, etc)
+  // Axios call to server for the phonebook
+  useEffect(()=>{
+    console.log("useEffect for phonebook");
+    Axios.get('http://localhost:3001/persons')
+    .then(response => {
+      setPersons(response.data)
+    })
+  }, [])
+
+  // The handler functions for field changes (introducing a new person to the book, new number, searchstring, etc)
   const newNameHandler = event => setNewName(event.target.value);
-  const newPhoneHandler = event => setNewPhone(event.target.value);
+  const newNumberHandler = event => setNewNumber(event.target.value);
   const newSFHandler = event => setNewFS(event.target.value.toLowerCase());
 
   const submitHandler = event => {
@@ -84,11 +89,11 @@ const App = () => {
     setPersons(
       persons.concat({
         name: newName,
-        phone: newPhone
+        number: newNumber
       })
     );
     setNewName("");
-    setNewPhone("");
+    setNewNumber("");
   };
 
   // App controls the rest of the form components and keeps track of the state
@@ -97,12 +102,12 @@ const App = () => {
       <h2>Phonebook</h2>
       <Search newSSHandler={newSFHandler} />
       <h2> Add new </h2>
-      <PhoneForm
+      <NumberForm
         newNameHandler={newNameHandler}
-        newPhoneHandler={newPhoneHandler}
+        newNumberHandler={newNumberHandler}
         submitHandler={submitHandler}
         newName={newName}
-        newPhone={newPhone}
+        newNumber={newNumber}
       />
       <h1>Numbers </h1>
       <PersonsDisplay persons={persons} filterString={filterString} />
