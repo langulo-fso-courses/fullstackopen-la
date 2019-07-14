@@ -21,7 +21,7 @@ const CountrySearch = ({ searchedCountry, setSearchedC }) => {
 // The display for the results of the search
 const CountryDisplay = ({ countries, searchedCountry }) => {
   const filter = country =>
-    country.name.toLowerCase().includes(searchedCountry);
+    country.name.toLowerCase().includes(searchedCountry.toLowerCase());
   const matches = countries.filter(filter);
 
   let elements = null;
@@ -29,14 +29,33 @@ const CountryDisplay = ({ countries, searchedCountry }) => {
     elements = <p>Too many matches, specify another filter</p>;
   } else if (matches.length < 1) {
     elements = <p>No countries found, try changing your search terms</p>;
+  } else if (matches.length === 1) {
+    elements = <CountryDetail country={matches[0]} />
   } else {
-    elements = matches.map(country => <CountryShort country={country} key={country.alpha3Code} />);
+    elements = matches.map(country => (
+      <CountryShort country={country} key={country.numericCode} />
+    ));
   }
   return <div className="countries-display">{elements}</div>;
 };
 
 const CountryShort = ({ country }) => {
   return <p>{country.name}</p>;
+};
+
+const CountryDetail = ({ country }) => {
+  return (
+    <div className="country-detail">
+      <h1>{country.name}</h1>
+      <span><b>Capital: </b>{country.capital}</span><br/>
+      <span><b>Population: </b>{country.population}</span>
+      <h3>Languages</h3>
+      <ul>
+        {country.languages.map((language => <li>{language.name}</li>))}
+      </ul>
+      <img src={country.flag} alt="country flag" width="480" length="640" />
+    </div>
+  );
 };
 
 function App() {
