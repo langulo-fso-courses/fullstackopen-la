@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 
 // The country search component
-const CountrySearch = ({ searchedCountry, setSearchedC }) => {
-  const handler = event => setSearchedC(event.target.value);
+const CountrySearch = ({ searchedCountry, setSearchedC, setSelectedC }) => {
+  const handler = event => {
+    setSearchedC(event.target.value)
+    setSelectedC(null);
+  };
   return (
     <div className="country-search">
       <span>
@@ -20,9 +23,9 @@ const CountrySearch = ({ searchedCountry, setSearchedC }) => {
 };
 
 // The display for the results of the search
-const CountryDisplay = ({ countries, searchedCountry }) => {
+const CountryDisplay = ({ countries, searchedCountry, selectedCountry, setSelectedC }) => {
   // Selected country is only relevant for the display component, hence that bit of state is here
-  const [selectedCountry, setSelectedC] = useState(null);
+  
 
   const filter = country =>
     country.name.toLowerCase().includes(searchedCountry.toLowerCase());
@@ -35,7 +38,7 @@ const CountryDisplay = ({ countries, searchedCountry }) => {
     elements = <p>Too many matches, specify another filter</p>;
   } else if (matches.length < 1) {
     elements = <p>No countries found, try changing your search terms</p>;
-  } else if (matches.length === 1) {
+  } else if (selectedCountry || matches.length === 1) {
     elements = <CountryDetail country={matches[0]} />;
   } else {
     elements = matches.map(country => (
@@ -73,7 +76,7 @@ const CountryDetail = ({ country }) => {
       <h3>Languages</h3>
       <ul>
         {country.languages.map(language => (
-          <li>{language.name}</li>
+          <li key={language.iso639_2}>{language.name}</li>
         ))}
       </ul>
       <img src={country.flag} alt="country flag" width="480" length="640" />
@@ -82,11 +85,10 @@ const CountryDetail = ({ country }) => {
 };
 
 function App() {
-  // TODO: DON'T use the namesearch in the API, it might trigger too many requests too fast and you'll get blacklisted for awhile
-
   // State
   const [searchedCountry, setSearchedC] = useState("");
   const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedC] = useState(null);  // Finding out where this shoulda gone was PAINFUL
 
   // Request the whole list of countries from the endpoint and save it as state
 
@@ -101,8 +103,9 @@ function App() {
       <CountrySearch
         searchedCountry={searchedCountry}
         setSearchedC={setSearchedC}
+        setSelectedC={setSelectedC}
       />
-      <CountryDisplay countries={countries} searchedCountry={searchedCountry} />
+      <CountryDisplay countries={countries} searchedCountry={searchedCountry} selectedCountry={selectedCountry} setSelectedC={setSelectedC} />
     </div>
   );
 }
