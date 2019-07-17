@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import PersonsAPI from "./requests/PersonsAPI";
 
 // The search form
 const Search = ({ newSSHandler, filterString }) => {
@@ -19,14 +19,14 @@ const NumberForm = ({
   newName,
   newNumber
 }) => {
-  // form needs onSubmit, input needs onChange
   return (
     <form onSubmit={submitHandler}>
       <div>
         name: <input type="text" onChange={newNameHandler} value={newName} />
       </div>
       <div>
-        Number: <input type="text" onChange={newNumberHandler} value={newNumber} />
+        Number:{" "}
+        <input type="text" onChange={newNumberHandler} value={newNumber} />
       </div>
       <div>
         <button type="submit">add</button>
@@ -36,15 +36,17 @@ const NumberForm = ({
 };
 
 // The phonebook display component
-const PersonsDisplay = ({ persons, filterString }) => {
+const PersonsDisplay = ({ persons, filterString, deleteHandler }) => {
   // The search filter
   const filter = person =>
     person.name.toLowerCase().includes(filterString) ||
     filterString.length === 0;
 
+    console.log("persons" + persons)
   const personElements = persons.filter(filter).map(person => (
-    <div>
+    <div key={person.id}>
       {person.name} {person.number}
+      <button onClick={deleteHandler(person.id)}>Delete</button>
     </div>
   ));
   return (
@@ -62,39 +64,42 @@ const App = () => {
   const [newNumber, setNewNumber] = useState(""); // state of newnumber input
   const [filterString, setNewFS] = useState(""); // the search filter string
 
-  // Axios call to server for the phonebook
-  useEffect(()=>{
-    console.log("useEffect for phonebook");
-    Axios.get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
-    })
-  }, [])
+  // API call for the phonebook
+  useEffect(() => {
+    PersonsAPI.getAll().then(notes => setPersons(notes));
+  }, []);
 
   // The handler functions for field changes (introducing a new person to the book, new number, searchstring, etc)
   const newNameHandler = event => setNewName(event.target.value);
   const newNumberHandler = event => setNewNumber(event.target.value);
   const newSFHandler = event => setNewFS(event.target.value.toLowerCase());
-
   const submitHandler = event => {
-    // Add the new person to the array, remember make a new one don't mutate the original
     event.preventDefault();
-
+    // Prevent duplicating contacts
     for (const person of persons) {
       if (person.name === newName) {
         alert(`${newName} is already added to phonebook`);
         return;
       }
     }
-    setPersons(
-      persons.concat({
-        name: newName,
-        number: newNumber
-      })
-    );
-    setNewName("");
-    setNewNumber("");
+
+    const personObj = { name: newName, number: newNumber };
+    // Add the new contact to the existing state - to the server
+    PersonsAPI.create(personObj).then(person => {
+      // Update the local persons state
+      setPersons(persons.concat(person));
+      // Add the new contact to the existing state - locally
+      setNewName("");
+      setNewNumber("");
+    });
   };
+
+  // This handles the del button, so it has to curry or trigger constant reloads
+  const deleteHandler = id => () => {
+    const newPersonList = persons.filter((person) => person.id !== id)
+    PersonsAPI.destroy(id)
+    .then(setPersons(newPersonList))
+  }
 
   // App controls the rest of the form components and keeps track of the state
   return (
@@ -110,7 +115,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h1>Numbers </h1>
-      <PersonsDisplay persons={persons} filterString={filterString} />
+      <PersonsDisplay persons={persons} filterString={filterString} deleteHandler={deleteHandler} />
     </>
   );
 };
