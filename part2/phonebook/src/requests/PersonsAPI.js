@@ -2,7 +2,6 @@ import Axios from 'axios';
 const baseURL = `http://localhost:3001/`
 
 // An API
-
 const getAll = () => {
     return Axios.get(`${baseURL}persons`)
     .then(res => res.data)
@@ -13,13 +12,13 @@ const getOne = id => {
     .then(res => res.data)
 }
 
-const update = (id, newNote) => {
-    return Axios.put(`${baseURL}persons/${id}`)
+const update = (id, newPerson) => {
+    return Axios.put(`${baseURL}persons/${id}`, newPerson)
     .then(res => res.data)
 }
 
-const create = newNote => {
-    return Axios.post(`${baseURL}persons/`, newNote)
+const create = newPerson => {
+    return Axios.post(`${baseURL}persons/`, newPerson)
     .then(res => res.data)
 }
 

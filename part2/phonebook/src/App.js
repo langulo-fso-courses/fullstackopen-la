@@ -22,7 +22,7 @@ const NumberForm = ({
   return (
     <form onSubmit={submitHandler}>
       <div>
-        name: <input type="text" onChange={newNameHandler} value={newName} />
+        Name: <input type="text" onChange={newNameHandler} value={newName} />
       </div>
       <div>
         Number:{" "}
@@ -42,7 +42,6 @@ const PersonsDisplay = ({ persons, filterString, deleteHandler }) => {
     person.name.toLowerCase().includes(filterString) ||
     filterString.length === 0;
 
-    console.log("persons" + persons)
   const personElements = persons.filter(filter).map(person => (
     <div key={person.id}>
       {person.name} {person.number}
@@ -59,39 +58,56 @@ const PersonsDisplay = ({ persons, filterString, deleteHandler }) => {
 
 // The "main" app
 const App = () => {
-  const [persons, setPersons] = useState([]);
+  const [persons, setPersons] = useState([]); 
   const [newName, setNewName] = useState(""); // state of newname input
   const [newNumber, setNewNumber] = useState(""); // state of newnumber input
   const [filterString, setNewFS] = useState(""); // the search filter string
 
   // API call for the phonebook
   useEffect(() => {
-    PersonsAPI.getAll().then(notes => setPersons(notes));
+    PersonsAPI.getAll().then(personData => setPersons(personData));
   }, []);
 
   // The handler functions for field changes (introducing a new person to the book, new number, searchstring, etc)
   const newNameHandler = event => setNewName(event.target.value);
   const newNumberHandler = event => setNewNumber(event.target.value);
   const newSFHandler = event => setNewFS(event.target.value.toLowerCase());
+  // handler for the contact form
+  const replaceNumber = newPerson => {
+    // Code smell - seems inefficient, but the alternative involved mutating state, what do?
+    let updatedPerson = {}
+
+    const newPersons = persons.map(person => {
+      if (person.name === newPerson.name){
+        person.number = newPerson.number
+        updatedPerson = person
+      }
+      return person
+    })
+    // API call
+    PersonsAPI.update(updatedPerson.id, updatedPerson)
+    .then(setPersons(newPersons))
+  }
   const submitHandler = event => {
     event.preventDefault();
-    // Prevent duplicating contacts
+    const newPerson = { name: newName, number: newNumber };
+    let replace = false;
     for (const person of persons) {
-      if (person.name === newName) {
-        alert(`${newName} is already added to phonebook`);
-        return;
+      if (person.name === newPerson.name) {
+        replace = window.confirm(`${newName} is already added to phonebook. Replace previous phone number?`);
+        if (replace) {
+          replaceNumber(newPerson)
+        }
       }
     }
-
-    const personObj = { name: newName, number: newNumber };
-    // Add the new contact to the existing state - to the server
-    PersonsAPI.create(personObj).then(person => {
-      // Update the local persons state
-      setPersons(persons.concat(person));
-      // Add the new contact to the existing state - locally
+    if (!replace){
+      // Add the new contact to the existing state - to the server
+      PersonsAPI.create(newPerson).then(person => {
+      setPersons(persons.concat(person));  // Update the local persons state
       setNewName("");
       setNewNumber("");
     });
+    }
   };
 
   // This handles the del button, so it has to curry or trigger constant reloads
