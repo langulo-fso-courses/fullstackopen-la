@@ -1,11 +1,17 @@
-import React from 'react';
+import React from "react";
 
 // The country search component
-const CountrySearch = ({ searchedCountry, setSearchedC, setSelectedC }) => {
+const CountrySearch = ({
+  countryFilter,
+  setCountryFilter,
+  setActiveCountry
+}) => {
+  // Code smell: This seems like it breaks separation of concerns, but it works as requested
   const handler = event => {
-    setSearchedC(event.target.value);
-    setSelectedC(null);
+    setCountryFilter(event.target.value);
+    setActiveCountry(null);
   };
+
   return (
     <div className="country-search">
       <span>
@@ -13,7 +19,7 @@ const CountrySearch = ({ searchedCountry, setSearchedC, setSelectedC }) => {
         <input
           name="searched"
           type="text"
-          value={searchedCountry}
+          value={countryFilter}
           onChange={handler}
         />
       </span>

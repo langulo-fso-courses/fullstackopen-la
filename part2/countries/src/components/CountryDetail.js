@@ -14,10 +14,9 @@ const CountryDetail = ({ country }) => {
     Axios.get(
       "http://api.apixu.com/v1/current.json?key=6a7f5b408af84601941232514191407&q=" +
         country.capital
-    ).then(res => {
-      setWeather(res.data);
-      console.log(res);
-    });
+    )
+      .then(res => setWeather(res.data))
+      .catch(res => console.log("weather request failed: ", res));
   }, [country.capital]);
 
   return (
