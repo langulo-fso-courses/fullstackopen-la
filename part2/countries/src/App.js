@@ -28,6 +28,7 @@ function App() {
   const matches = filterCountries(allCountries, countryFilter);
   // 2. Logic to select what to render here
   // TODO: Chains of ifs are a code smell
+  // TODO: Check to see if I could replace it with a switch
   if (activeCountry) {
     elements = <CountryDetail country={activeCountry} />;
   } else if (matches.length > 10) {

@@ -22,6 +22,9 @@ const create = newPerson => {
     .then(res => res.data)
 }
 
+// Axios destroy function returns no data, so that return is a bad idea
+// This points to a more general problem in designing a wrapper around AJAX libraries
+// Which I'm not knowledgeable enough to solve at this time - L.A.
 const destroy = id => {
     return Axios.delete(`${baseURL}persons/${id}`)
     .then(res => res.data)
